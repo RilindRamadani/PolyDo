@@ -2,8 +2,9 @@ const express = require("express");
 const connectDB = require("./data/database");
 const bodyParser = require("body-parser");
 const { graphqlHTTP } = require("express-graphql");
-const graphQlSchema = require("./graphql/schema/index");
-const graphQlResolvers = require("./graphql/resolver/index");
+const rootSchema = require("./graphql/schema/index");
+const rootResolver = require("./graphql/resolver/index");
+const isAuth = require("./middleware/is-auth");
 
 const app = express();
 
@@ -11,12 +12,14 @@ const port = 3000;
 
 app.use(bodyParser.json());
 
+//will run on every request, since we cant lock like on REST
+app.use(isAuth);
+
 app.use(
   "/graphql",
   graphqlHTTP({
-    schema: graphQlSchema,
-
-    rootValue: graphQlResolvers,
+    schema: rootSchema,
+    rootValue: rootResolver,
 
     graphiql: true,
   })

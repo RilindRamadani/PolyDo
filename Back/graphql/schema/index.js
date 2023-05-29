@@ -37,14 +37,23 @@ module.exports = buildSchema(`
       firstName : String!
       lastName : String!    
     }
+
+    type AuthData{
+
+      userId : ID!
+      token: String!
+      tokenExpiration: Int!
+
+    }
+
     type RootQuery {
       tasks: [Task]
       task(id: ID!): Task
       lists: [List]
       list(id: ID!): List
+      login(email: String!, password: String!) : AuthData
 
     }
-  
     type RootMutation {
       createTask(title: String!, description: String, dueDate: String, listId: ID): Task
       updateTask(id: ID!, title: String, description: String, dueDate: String, completed: Boolean): Task
