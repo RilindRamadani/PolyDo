@@ -1,12 +1,26 @@
 const express = require("express");
 const connectDB = require("./data/database");
+const bodyParser = require("body-parser");
+const { graphqlHTTP } = require("express-graphql");
+const graphQlSchema = require("./graphql/schema/index");
+const graphQlResolvers = require("./graphql/resolver/index");
 
 const app = express();
+
 const port = 3000;
 
-app.get("/", (req, res) => {
-  res.send("Hello World!ssssssssssssssssssssssssssssssss");
-});
+app.use(bodyParser.json());
+
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: graphQlSchema,
+
+    rootValue: graphQlResolvers,
+
+    graphiql: true,
+  })
+);
 
 connectDB()
   .then(() => {

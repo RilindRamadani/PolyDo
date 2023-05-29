@@ -4,9 +4,10 @@ const connectDB = async () => {
   try {
     const user = process.env.MONGODB_USER;
     const password = process.env.MONGODB_PASSWORD;
+    const db = process.env.MONGODB_DB;
 
     await mongoose.connect(
-      `mongodb+srv://${user}:${password}@polydocluster.aygf89v.mongodb.net/`,
+      `mongodb+srv://${user}:${password}@polydocluster.aygf89v.mongodb.net/${db}`,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
