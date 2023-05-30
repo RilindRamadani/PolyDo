@@ -33,6 +33,44 @@ export default {
         throw err;
       });
   },
+
+  //On updating, the  userInput will always have 4 fields. They are auto filled on front, and send on back as well since they are required
+  updateUser: async ({ id, userInput }) => {
+    try {
+      const user = await User.findById(id);
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      user.email = userInput.email || user.email;
+      user.username = userInput.username || user.username;
+      user.firstName = userInput.firstName || user.firstName;
+      user.lastName = userInput.lastName || user.lastName;
+
+      const updatedUser = await user.save();
+
+      return { ...updatedUser._doc, password: null };
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  deleteUser: async ({ id }) => {
+    try {
+      const deletedUser = await User.findByIdAndRemove(id);
+
+      if (!deletedUser) {
+        throw new Error("User not found");
+      }
+
+      // return true;
+      return { ...deletedUser._doc, password: null };
+    } catch (err) {
+      throw err;
+    }
+  },
+
   login: async ({ email, password }) => {
     const user = await User.findOne({ email: email });
 

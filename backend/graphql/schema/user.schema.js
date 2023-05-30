@@ -1,5 +1,4 @@
-export const userSchema = 
-`type User {
+export const userSchema = `type User {
     _id: ID!,
     username: String!
     email : String!
@@ -20,4 +19,4 @@ export const userSchema =
     userId : ID!
     token: String!
     tokenExpiration: Int!
-  }`
+  }`;
