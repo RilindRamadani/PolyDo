@@ -4,6 +4,9 @@ import { ObjectId } from "mongodb";
 
 export default {
   tasks: () => {
+    if (!request.isAuth) {
+      throw new Error("Unauthenticated");
+    }
     return Task.find()
       .populate({
         path: "subTasks",
@@ -18,6 +21,9 @@ export default {
   },
 
   task: (id) => {
+    if (!request.isAuth) {
+      throw new Error("Unauthenticated");
+    }
     return Task.findOne({ _id: new ObjectId(id) })
       .populate({
         path: "subTasks",
@@ -53,9 +59,12 @@ export default {
   },
 
   updateTask: (args, req) => {
-    if (!req.isAuth) {
+    if (!request.isAuth) {
       throw new Error("Unauthenticated");
     }
+    // if (!req.isAuth) {
+    //   throw new Error("Unauthenticated");
+    // }
 
     const { id, title, description, dueDate, completed } = args;
 
@@ -89,6 +98,9 @@ export default {
   },
 
   deleteTask: async (args) => {
+    if (!request.isAuth) {
+      throw new Error("Unauthenticated");
+    }
     try {
       const taskId = args.id;
 
@@ -117,6 +129,9 @@ export default {
   },
 
   addSubTask: async (args, request) => {
+    if (!request.isAuth) {
+      throw new Error("Unauthenticated");
+    }
     const subTask = await new Task({
       title: args.title || "",
       description: args.description,
@@ -134,16 +149,15 @@ export default {
 
     parentSubTasks.push(subTask);
 
-    await Task.updateOne(
-      { _id: new ObjectId(args.parentId) },
-      { $set: { subTasks: parentSubTasks } }
-    )
-      .then((response) => {
-        return subTask;
-      })
-      .catch((error) => {
-        console.log(error);
-        return false;
-      });
+    try {
+      await Task.updateOne(
+        { _id: new ObjectId(args.parentId) },
+        { $set: { subTasks: parentSubTasks } }
+      );
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   },
 };

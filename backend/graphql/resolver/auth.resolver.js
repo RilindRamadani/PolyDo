@@ -36,6 +36,9 @@ export default {
 
   //On updating, the  userInput will always have 4 fields. They are auto filled on front, and send on back as well since they are required
   updateUser: async ({ id, userInput }) => {
+    if (!request.isAuth) {
+      throw new Error("Unauthenticated");
+    }
     try {
       const user = await User.findById(id);
 
@@ -57,6 +60,9 @@ export default {
   },
 
   deleteUser: async ({ id }) => {
+    if (!request.isAuth) {
+      throw new Error("Unauthenticated");
+    }
     try {
       const deletedUser = await User.findByIdAndRemove(id);
 
@@ -65,7 +71,7 @@ export default {
       }
 
       // return true;
-      return { ...deletedUser._doc, password: null };
+      return true;
     } catch (err) {
       throw err;
     }

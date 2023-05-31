@@ -4,7 +4,10 @@ import { ObjectId } from "mongodb";
 
 export default {
   //TODO: Add updating and deleting a list.
-  lists: () => {
+  lists: (request) => {
+    // if (!request.isAuth) {
+    //   throw new Error("Unauthenticated");
+    // }
     return List.find()
       .populate("tasks")
       .then((lists) => {
@@ -22,9 +25,9 @@ export default {
       });
   },
   createList: (args, request) => {
-    // if (!request.isAuth) {
-    //   throw new Error("Unauthenticated");
-    // }
+    if (!request.isAuth) {
+      throw new Error("Unauthenticated");
+    }
 
     // console.log(request.isAuth);
     const list = new List({
@@ -44,6 +47,9 @@ export default {
       });
   },
   updateList: (args) => {
+    if (!request.isAuth) {
+      throw new Error("Unauthenticated");
+    }
     const { id, name, description } = args;
     const updateFields = {};
 
@@ -66,6 +72,9 @@ export default {
   },
 
   deleteList: (args) => {
+    if (!request.isAuth) {
+      throw new Error("Unauthenticated");
+    }
     return List.findByIdAndRemove(args.id)
       .then((deletedList) => {
         if (!deletedList) {
@@ -79,6 +88,9 @@ export default {
   },
 
   addTaskToList: async (args, request) => {
+    if (!request.isAuth) {
+      throw new Error("Unauthenticated");
+    }
     const list = await List.findOne({ _id: new ObjectId(args.listId) }).then(
       (list) => {
         return { ...list._doc };
@@ -95,16 +107,15 @@ export default {
     let listTasks = list.tasks;
     listTasks.push(task);
 
-    await List.updateOne(
-      { _id: new ObjectId(args.listId) },
-      { $set: { tasks: listTasks } }
-    )
-      .then((response) => {
-        return response.acknowledged;
-      })
-      .catch((error) => {
-        console.log(error);
-        return false;
-      });
+    try {
+      const response = await List.updateOne(
+        { _id: new ObjectId(args.listId) },
+        { $set: { tasks: listTasks } }
+      );
+      return response.acknowledged;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   },
 };

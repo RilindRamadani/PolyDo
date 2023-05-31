@@ -19,17 +19,17 @@ export default buildSchema(`
     type RootMutation {
       createTask(title: String!, description: String, dueDate: String, listId: ID): Task
       updateTask(id: ID!, title: String, description: String, dueDate: String, completed: Boolean): Task
-      deleteTask(id: ID!): Task
-      addSubTask(parentId: ID!, title: String!, description: String, dueDate: String): Task
+      deleteTask(id: ID!): Boolean
+      addSubTask(parentId: ID!, title: String!, description: String, dueDate: String): Boolean
 
       createList(name: String!, description: String): List
       updateList(id: ID!, name: String, description: String): List
-      deleteList(id: ID!): List
+      deleteList(id: ID!): Boolean
       addTaskToList(taskId: ID!, listId: ID!): Boolean
 
       createUser(UserInput : UserInput): User 
       updateUser(id: ID!, userInput: UserInput): User
-      deleteUser(id: ID!): User
+      deleteUser(id: ID!): Boolean
 
     }
       schema {
